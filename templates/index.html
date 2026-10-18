@@ -6,7 +6,7 @@
     
     <!-- عنوان المنصة المفضل للظهور في نتائج بحث جوجل -->
     <title>منصة المساعدين الأذكياء - الذكاء الاصطناعي المتكامل</title>
-    <meta name="google-site-verification" content="Aut5pIdDF2lfCzHD34TCEUECaQYvoPRlZhQkJqiOltI" />
+    
     <!-- الوسوم المخصصة لمحركات البحث (SEO) -->
     <meta name="description" content="منصة متكاملة للمساعدين الذكيين: توليد الصور، تحليل الصور ورؤيتها، المساعد السريع، والأكاديمي مجاناً.">
     <meta name="keywords" content="ذكاء اصطناعي, مساعد ذكي, توليد صور, تحليل صور, OCR, منصة ذكاء اصطناعي">
@@ -315,10 +315,10 @@ function mathExtract(text){
     const put=(tex,d)=>{store.push([tex.trim(),d]);return '@@M'+(store.length-1)+'@@'};
     p=p.replace(/\$\$([\s\S]+?)\$\$/g,(m,t,off,str)=>{
       const before=str.slice(0,off),after=str.slice(off+m.length);
-      return put(t,/(^|\n)[ \t]*$/.test(before)&&/^[ \t]*(\n\vert{}$)/.test(after))});
+      return put(t,/(^|\n)[ \t]*$/.test(before)&&/^[ \t]*(\n|$)/.test(after))});
     p=p.replace(/\\\[([\s\S]+?)\\\]/g,(m,t)=>put(t,true));
     p=p.replace(/\\\(([\s\S]+?)\\\)/g,(m,t)=>put(t,false));
-    p=p.replace(/\$([^$\n]+?)\$/g,(m,t)=>/^\s\vert{}\s$/.test(t)?m:put(t,false));
+    p=p.replace(/\$([^$\n]+?)\$/g,(m,t)=>/^\s|\s$/.test(t)?m:put(t,false));
     return p;
   });
   return {text:out.join(''),store};
@@ -379,7 +379,7 @@ function push(m){
   const h=load(agent);
   // منع حفظ قيم base64 للصور الكبيرة لمنع استهلاك الـ localStorage
   const copyM = {...m};
-  if(copyM.image && copyM.image.startsWith('data:')) copyM.image = null;
+  if(copyM.image && copyM.image.startsWith('data:')){copyM.image = null; if(!copyM.content) copyM.content='(صورة مولّدة)';}
   h.push(copyM);
   save(agent,h);
 }
@@ -405,7 +405,7 @@ q.addEventListener('input',()=>{grow();if(!busyNow)mood(q.value.trim()?'listen':
 q.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();$('#f').requestSubmit()}});
 $('#att').onclick=()=>$('#img').click();
 function setFile(f){file=f;const c=$('#chip');if(f){$('#cimg').src=URL.createObjectURL(f);$('#cname').textContent=f.name;c.style.display='flex'}else{c.style.display='none';$('#img').value=''}}
-$('#img').onchange=e=>setFile(e.target.files[0]\vert{}\vert{}null);$('#crm').onclick=()=>setFile(null);
+$('#img').onchange=e=>setFile(e.target.files[0]||null);$('#crm').onclick=()=>setFile(null);
 function busy(on){busyNow=on;$('#send').disabled=on;$('#wf').disabled=on;if(on)mood('think')}
 async function call(url,fd){
   busy(true);const w=typing();
